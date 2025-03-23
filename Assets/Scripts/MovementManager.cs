@@ -90,7 +90,7 @@ public class MovementManager : MonoBehaviour
     {
         var leftCarKey = Input.GetKeyDown(KeyCode.A);
         if (!leftCarKey) return;
-        
+        print("CheckLeft");
         _leftDestination = _leftCarHeadingLeft ? _leftMarkers[1].position : _leftMarkers[0].position;
         _leftCarHeadingLeft = !_leftCarHeadingLeft;
         _leftCarIsMoving = true;

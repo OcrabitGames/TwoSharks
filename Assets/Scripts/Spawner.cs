@@ -27,6 +27,19 @@ public class Spawner : MonoBehaviour
         {
             _pinkMarkers = new Transform[] { spawnMarkers[2].transform, spawnMarkers[3].transform }; 
         }
+        
+        _blueTimes =  new float[_blueMarkers.Length];
+        _pinkTimes =  new float[_pinkMarkers.Length];
+        
+        for (int i = 0; i < _blueTimes.Length; i++)
+        {
+            _blueTimes[i] = CreateTimeTillNextSpawn();
+        }
+
+        for (int i = 0; i < _pinkTimes.Length; i++)
+        {
+            _pinkTimes[i] = CreateTimeTillNextSpawn();
+        }
     }
 
     // Update is called once per frame
@@ -43,10 +56,12 @@ public class Spawner : MonoBehaviour
     {
         for (int i = 0; i < times.Length; i++)
         {
+            times[i] -= Time.deltaTime;
+            
             if (times[i] <= 0)
             {
                 Instantiate(ChooseRandomPrefab(prefabs), ChooseRandomSpawnPosition(markers), Quaternion.identity);
-                times[i] = 0;
+                times[i] = CreateTimeTillNextSpawn();
             }
         }
     }

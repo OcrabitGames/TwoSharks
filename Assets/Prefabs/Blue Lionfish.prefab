@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5565492290535062657}
   - component: {fileID: 7462712798200816018}
   - component: {fileID: 2044085005413260037}
+  - component: {fileID: 5759464952691602252}
   m_Layer: 0
   m_Name: Blue Lionfish
   m_TagString: Untagged
@@ -145,3 +146,16 @@ EdgeCollider2D:
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
   m_UseAdjacentEndPoint: 0
+--- !u!114 &5759464952691602252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7064062411536892923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b7b779ccf5381141b5b92b45553224e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 3
