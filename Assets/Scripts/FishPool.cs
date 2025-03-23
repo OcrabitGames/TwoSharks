@@ -63,4 +63,12 @@ public class FishPool
             fish.Freeze();
         }
     }
+    
+    public void UnfreezeAllFish()
+    {
+        foreach (var fish in new List<PooledFish>(_activeFish))
+        {
+            fish.Unfreeze();
+        }
+    }
 }

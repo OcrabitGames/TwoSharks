@@ -31,7 +31,7 @@ public class FishManager : MonoBehaviour
     private float _blueLionfishCooldown = 0f;
     private float _pinkLionfishCooldown = 0f;
     
-    public bool fishActive = true;
+    public bool fishActive = false;
     
     private FishPool _blueMinnowPool;
     private FishPool _pinkMinnowPool;
@@ -155,5 +155,9 @@ public class FishManager : MonoBehaviour
     public void ActivateFish()
     {
         fishActive = true;
+        _blueMinnowPool.UnfreezeAllFish();
+        _pinkMinnowPool.UnfreezeAllFish();
+        _blueLionfishPool.UnfreezeAllFish();
+        _pinkLionfishPool.UnfreezeAllFish();
     }
 }

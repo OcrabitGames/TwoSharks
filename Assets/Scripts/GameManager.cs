@@ -3,10 +3,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
+    public static GameManager Instance { get; set; }
 
-    public int highScore = 0;
+    public int highScore;
     public int score = 0;
+
+    // Main Highscore Display
+    public TextMeshProUGUI highScoreValueText;
     
     public TextMeshProUGUI scoreText;
     public GameObject gameOverCanvas;
@@ -21,6 +24,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Instance = this;
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+        highScoreValueText.text = highScore.ToString();
     }
 
     // Update is called once per frame
@@ -46,12 +51,28 @@ public class GameManager : MonoBehaviour
         UpdateScoreText();
     }
 
-    public void GameOver()
+    public void UpdateHighScore()
     {
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
         if (score > highScore)
         {
+            PlayerPrefs.SetInt("HighScore", score);
+            PlayerPrefs.Save();
             highScore = score;
+            highScoreValueText.text = highScore.ToString();
         }
+    }
+
+    public void GoHome()
+    {
+        UpdateHighScore();
+        FishManager.Instance.ReturnAllFish();
+        movementController.Reset();
+    }
+    
+    public void GameOver()
+    {
+        UpdateHighScore();
         
         FishManager.Instance.DeactivateFish();
         
@@ -73,6 +94,22 @@ public class GameManager : MonoBehaviour
         gameOverCanvas.SetActive(false);
         movementController.Activate();
         
+        gameActive = true;
+    }
+
+    public void Pause()
+    {
+        FishManager.Instance.DeactivateFish();
+        movementController.Deactivate();
+
+        gameActive = false;
+    }
+
+    public void Resume()
+    {
+        FishManager.Instance.ActivateFish();
+        movementController.Activate();
+
         gameActive = true;
     }
 }

@@ -27,6 +27,11 @@ public class PooledFish : MonoBehaviour
         _isActive = false;
     }
 
+    public void Unfreeze()
+    {
+        _isActive = true;
+    }
+
     // Update is called once per frame
     void Update()
     {

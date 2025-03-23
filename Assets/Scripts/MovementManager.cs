@@ -1,9 +1,10 @@
 using UnityEngine;
 using System;
 
+
 public class MovementManager : MonoBehaviour
 {
-    private bool _isActive = true;
+    [SerializeField] private bool isActive = true;
     
     public GameObject[] movementMarkers;
     private Transform[] _leftMarkers;
@@ -61,7 +62,7 @@ public class MovementManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (!_isActive) return;
+        if (!isActive) return;
         
         CheckLeft();
         CheckRight();
@@ -157,11 +158,20 @@ public class MovementManager : MonoBehaviour
 
     public void Activate()
     {
-        _isActive = true;
+        isActive = true;
     }
 
     public void Deactivate()
     {
-        _isActive = false;
+        isActive = false;
+    }
+
+    public void Reset()
+    {
+        isActive = false;
+        leftCar.transform.position = _leftMarkers[0].position;
+        leftCar.transform.rotation = Quaternion.identity;
+        rightCar.transform.position = _rightMarkers[0].position;
+        rightCar.transform.rotation = Quaternion.identity;
     }
 }
