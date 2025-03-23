@@ -1,9 +1,10 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using System;
 
 public class MovementManager : MonoBehaviour
 {
+    public bool spawningEnabled = true;
+    
     public GameObject[] movementMarkers;
     private Transform[] _leftMarkers;
     private Transform[] _rightMarkers;
@@ -55,6 +56,8 @@ public class MovementManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!spawningEnabled) return;
+        
         CheckLeft();
         CheckRight();
         
@@ -88,9 +91,8 @@ public class MovementManager : MonoBehaviour
     }
     private void CheckLeft()
     {
-        var leftCarKey = Input.GetKeyDown(KeyCode.A);
+        var leftCarKey = VirtualInput.GetLeftPressed();
         if (!leftCarKey) return;
-        print("CheckLeft");
         _leftDestination = _leftCarHeadingLeft ? _leftMarkers[1].position : _leftMarkers[0].position;
         _leftCarHeadingLeft = !_leftCarHeadingLeft;
         _leftCarIsMoving = true;
@@ -98,7 +100,7 @@ public class MovementManager : MonoBehaviour
 
     private void CheckRight()
     {
-        var rightCarKey = Input.GetKeyDown(KeyCode.D);
+        var rightCarKey = VirtualInput.GetRightPressed();
         if (!rightCarKey) return;
         
         _rightDestination = _rightCarHeadingLeft ? _rightMarkers[1].position : _rightMarkers[0].position;

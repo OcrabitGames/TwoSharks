@@ -10,11 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 7718364516610016433}
   - component: {fileID: 5039193855093605633}
-  - component: {fileID: 4984832183173552877}
   - component: {fileID: 2113611204340559309}
+  - component: {fileID: 6829190211051936054}
+  - component: {fileID: 56491036051591339}
   m_Layer: 0
   m_Name: Blue Shark
-  m_TagString: Untagged
+  m_TagString: Shark
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.441, y: -2.327, z: 0}
-  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -89,8 +90,47 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!68 &4984832183173552877
-EdgeCollider2D:
+--- !u!114 &2113611204340559309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748322080154648110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4691a9164613514599f59609de02b32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!50 &6829190211051936054
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748322080154648110}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!60 &56491036051591339
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -124,37 +164,59 @@ EdgeCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.25, y: 1.92}
+    newSize: {x: 1.25, y: 1.92}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   m_Points:
-  - {x: 0.61261845, y: -0.14971203}
-  - {x: 0.2518079, y: -0.3797282}
-  - {x: 0.39066148, y: -0.971033}
-  - {x: -0.40571553, y: -0.96823186}
-  - {x: -0.40384817, y: -0.7723735}
-  - {x: -0.35213408, y: -0.4179684}
-  - {x: -0.6333766, y: -0.1351123}
-  - {x: -0.6178506, y: 0.11843286}
-  - {x: -0.44984967, y: 0.38558006}
-  - {x: -0.3609558, y: 0.7588669}
-  - {x: -0.11868148, y: 0.95051664}
-  - {x: 0.09134516, y: 0.97312766}
-  - {x: 0.2988229, y: 0.66055715}
-  - {x: 0.3278513, y: 0.3483812}
-  - {x: 0.6173422, y: 0.028664025}
-  - {x: 0.61002886, y: -0.15969253}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
---- !u!114 &2113611204340559309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 748322080154648110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4691a9164613514599f59609de02b32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+    m_Paths:
+    - - {x: 0.385, y: -0.96}
+      - {x: 0.39499998, y: -0.85999995}
+      - {x: 0.305, y: -0.71999997}
+      - {x: 0.255, y: -0.66999996}
+      - {x: 0.14798924, y: -0.5791955}
+      - {x: 0.18258709, y: -0.5491955}
+      - {x: 0.295, y: -0.26}
+      - {x: 0.295, y: -0.14}
+      - {x: 0.54698616, y: -0.13355422}
+      - {x: 0.5814897, y: -0.08991899}
+      - {x: 0.57205725, y: 0.0054627545}
+      - {x: 0.49584204, y: 0.092290744}
+      - {x: 0.375, y: 0.26}
+      - {x: 0.33638063, y: 0.35735893}
+      - {x: 0.295, y: 0.62}
+      - {x: 0.27959782, y: 0.6675871}
+      - {x: 0.255, y: 0.71999997}
+      - {x: 0.20120645, y: 0.7775872}
+      - {x: 0.175, y: 0.87}
+      - {x: 0.125, y: 0.9221849}
+      - {x: 0.095, y: 0.96}
+      - {x: -0.125, y: 0.96}
+      - {x: -0.205, y: 0.88}
+      - {x: -0.305, y: 0.78999996}
+      - {x: -0.36499998, y: 0.71999997}
+      - {x: -0.405, y: 0.57}
+      - {x: -0.405, y: 0.31}
+      - {x: -0.445, y: 0.32}
+      - {x: -0.5342378, y: 0.21222995}
+      - {x: -0.57907224, y: 0.13}
+      - {x: -0.55731714, y: -0.102811076}
+      - {x: -0.50347567, y: -0.12925634}
+      - {x: -0.355, y: -0.14}
+      - {x: -0.355, y: -0.39999998}
+      - {x: -0.325, y: -0.45}
+      - {x: -0.275, y: -0.48}
+      - {x: -0.285, y: -0.65999997}
+      - {x: -0.345, y: -0.7}
+      - {x: -0.405, y: -0.78}
+      - {x: -0.405, y: -0.96}
+      - {x: -0.205, y: -0.96}
+      - {x: -0.145, y: -0.94}
+      - {x: -0.065, y: -0.85999995}
+      - {x: 0.095, y: -0.96}
+  m_UseDelaunayMesh: 0

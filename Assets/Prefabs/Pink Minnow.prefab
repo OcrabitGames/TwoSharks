@@ -12,13 +12,17 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 7028616704906629411, guid: e64b21e1200e74d58b5f27f59cc8ac81, type: 3}
+    - target: {fileID: 7593641077212240224, guid: da0d1058ffb054e6cb969889d23823e3, type: 3}
+      propertyPath: isBlue
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7846671266197951323, guid: da0d1058ffb054e6cb969889d23823e3, type: 3}
       propertyPath: m_Name
-      value: Minnow Red
+      value: Pink Minnow
       objectReference: {fileID: 0}
     - target: {fileID: 9155452973832330129, guid: da0d1058ffb054e6cb969889d23823e3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9155452973832330129, guid: da0d1058ffb054e6cb969889d23823e3, type: 3}
       propertyPath: m_LocalPosition.y

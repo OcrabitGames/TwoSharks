@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
@@ -14,6 +15,8 @@ public class Spawner : MonoBehaviour
     
     private float[] _blueTimes;
     private float[] _pinkTimes;
+    
+    private readonly List<GameObject> _spawnedFish = new();
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -60,7 +63,8 @@ public class Spawner : MonoBehaviour
             
             if (times[i] <= 0)
             {
-                Instantiate(ChooseRandomPrefab(prefabs), ChooseRandomSpawnPosition(markers), Quaternion.identity);
+                var obj = Instantiate(ChooseRandomPrefab(prefabs), ChooseRandomSpawnPosition(markers), Quaternion.identity);
+                _spawnedFish.Add(obj);
                 times[i] = CreateTimeTillNextSpawn();
             }
         }
@@ -78,5 +82,15 @@ public class Spawner : MonoBehaviour
     private static Vector3 ChooseRandomSpawnPosition(Transform[] markers)
     {
         return markers[Random.Range(0, markers.Length)].position;
+    }
+    
+    public void StopAllFish()
+    {
+        foreach (var fish in _spawnedFish)
+        {
+            var script = fish.GetComponent<Lionfish>();
+            if (script != null)
+                script.StopMovement();
+        }
     }
 }
