@@ -3,13 +3,15 @@ using System;
 
 public class MovementManager : MonoBehaviour
 {
-    public bool spawningEnabled = true;
+    private bool _isActive = true;
     
     public GameObject[] movementMarkers;
     private Transform[] _leftMarkers;
     private Transform[] _rightMarkers;
     private Vector3 _leftDestination;
     private Vector3 _rightDestination;
+    
+    private float _maxDistance;
 
     public GameObject leftCar;
     public GameObject rightCar;
@@ -51,12 +53,15 @@ public class MovementManager : MonoBehaviour
         {
             _movementFunction = Vector3.MoveTowards;
         }
+        
+        // Max Distance Set
+        _maxDistance = Vector3.Distance(_leftMarkers[0].position, _leftMarkers[1].position);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (!spawningEnabled) return;
+        if (!_isActive) return;
         
         CheckLeft();
         CheckRight();
@@ -80,6 +85,13 @@ public class MovementManager : MonoBehaviour
         leftCar.transform.position = _movementFunction(leftCar.transform.position, 
             _leftDestination, 
             speed * Time.deltaTime);
+        
+        float distance = Vector3.Distance(leftCar.transform.position, _leftDestination);
+        float t = Mathf.Clamp01(distance / _maxDistance);
+        float angle = _leftCarHeadingLeft ? 30f : -30f;
+        Quaternion veerRotation = Quaternion.Euler(0, 0, angle);
+        
+        leftCar.transform.rotation = Quaternion.Lerp(Quaternion.identity, veerRotation, t);
     }
 
     private void MoveRight()
@@ -88,6 +100,13 @@ public class MovementManager : MonoBehaviour
             rightCar.transform.position,
             _rightDestination,
             Time.deltaTime * speed);
+        
+        float distance = Vector3.Distance(rightCar.transform.position, _rightDestination);
+        float t = Mathf.Clamp01(distance / _maxDistance);
+        float angle = _rightCarHeadingLeft ? 30f : -30f;
+        Quaternion veerRotation = Quaternion.Euler(0, 0, angle);
+        
+        rightCar.transform.rotation = Quaternion.Lerp(Quaternion.identity, veerRotation, t);
     }
     private void CheckLeft()
     {
@@ -134,5 +153,15 @@ public class MovementManager : MonoBehaviour
                 _rightCarOnLeft = !_rightCarOnLeft;
             }
         }
+    }
+
+    public void Activate()
+    {
+        _isActive = true;
+    }
+
+    public void Deactivate()
+    {
+        _isActive = false;
     }
 }

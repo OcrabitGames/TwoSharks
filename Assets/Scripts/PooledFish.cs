@@ -22,6 +22,11 @@ public class PooledFish : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    public void Freeze()
+    {
+        _isActive = false;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -42,10 +47,11 @@ public class PooledFish : MonoBehaviour
         if (isMinnow)
         {
             FishManager.Instance.ReturnFish(this);
+            GameManager.Instance.IncreaseScore();
         }
         else
         {
-            FishManager.Instance.ReturnAllFish();
+            GameManager.Instance.GameOver();
         }
 
     }

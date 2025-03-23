@@ -31,6 +31,8 @@ public class FishManager : MonoBehaviour
     private float _blueLionfishCooldown = 0f;
     private float _pinkLionfishCooldown = 0f;
     
+    public bool fishActive = true;
+    
     private FishPool _blueMinnowPool;
     private FishPool _pinkMinnowPool;
     private FishPool _blueLionfishPool;
@@ -64,8 +66,10 @@ public class FishManager : MonoBehaviour
         }
     }
     // Update is called once per frame
-    void Update()
+    private void Update()
     {   
+        if (!fishActive) return;
+        
         _blueLionfishCooldown -= Time.deltaTime;
         _pinkLionfishCooldown -= Time.deltaTime;
         
@@ -137,5 +141,19 @@ public class FishManager : MonoBehaviour
         _pinkMinnowPool.ReturnAllFish();
         _blueLionfishPool.ReturnAllFish();
         _pinkLionfishPool.ReturnAllFish();
+    }
+
+    public void DeactivateFish()
+    {
+        fishActive = false;
+        _blueMinnowPool.FreezeAllFish();
+        _pinkMinnowPool.FreezeAllFish();
+        _blueLionfishPool.FreezeAllFish();
+        _pinkLionfishPool.FreezeAllFish();
+    }
+    
+    public void ActivateFish()
+    {
+        fishActive = true;
     }
 }

@@ -55,4 +55,12 @@ public class FishPool
         }
         _activeFish.Clear();
     }
+    
+    public void FreezeAllFish()
+    {
+        foreach (var fish in new List<PooledFish>(_activeFish))
+        {
+            fish.Freeze();
+        }
+    }
 }
