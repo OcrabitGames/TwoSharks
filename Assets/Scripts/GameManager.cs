@@ -1,15 +1,28 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; set; }
-
+    public static GameManager Instance { get; private set; }
+    
     public int highScore;
-    public int score = 0;
-
+    public int score;
+    
     // Main Highscore Display
     public TextMeshProUGUI highScoreValueText;
+    
+    // Audio Display
+    public GameObject audioIcon;
+    public Sprite[] audioIcons;
+    [SerializeField] private bool audioMuted;
+    
+    // Audio Source
+    private AudioSource _audioSource;
+    private float _audioPitch;
+    public AudioClip deathClip;
+    private Coroutine _audioLoopCoroutine;
+    private Coroutine _deathSoundCoroutine;
     
     public TextMeshProUGUI scoreText;
     public GameObject gameOverCanvas;
@@ -18,20 +31,132 @@ public class GameManager : MonoBehaviour
     
     public MovementManager movementController;
     
-    [SerializeField] private bool gameActive = false;
+    [SerializeField] private bool gameActive;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Instance = this;
+        
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         highScoreValueText.text = highScore.ToString();
+        
+        _audioSource = GetComponent<AudioSource>();
+        _audioPitch = _audioSource.pitch;
+        
+        audioMuted = PlayerPrefs.GetInt("AudioMuted", 0) == 1;
+        UpdateAudioIcon();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void UpdateAudioIcon()
+    {
+        audioIcon.GetComponent<SpriteRenderer>().sprite = audioMuted ? audioIcons[1] : audioIcons[0];
+    }
+    public void ChangeAudio()
+    {
+        audioMuted = !audioMuted;
+        var val = audioMuted ? 1 : 0;
+        PlayerPrefs.SetInt("AudioMuted", val);
+        PlayerPrefs.Save();
+
+        UpdateAudioIcon();
+    }
+
+    private IEnumerator PlayDeathSoundCoroutine()
+    {
+        // Stop and play clip
+        _audioSource.Stop();
+
+        _audioSource.pitch = 0.7f;
+        _audioSource.PlayOneShot(deathClip);
+
+        // Wait for the clip
+        yield return new WaitForSeconds(deathClip.length);
+
+        if (!gameActive)
+        {
+            // Play clip with pitch down
+            _audioSource.time = 25.7f;
+            _audioSource.Play();
+        }
+    }
+
+    private void PlayGameAudio()
+    {
+        _audioSource.Stop();
+        _audioSource.pitch = _audioPitch;
+        _audioSource.Play();
+    }
+
+    private void CheckStopFadeCoroutine()
+    {
+        if (_audioLoopCoroutine == null) return;
+        
+        StopCoroutine(_audioLoopCoroutine);
+        _audioLoopCoroutine = null;
+    }
+    
+    private IEnumerator FadeAudioLoop()
     {
         
+        float fadeDuration = 2f;
+        float originalVolume = _audioSource.volume;
+ 
+        while (true)
+        {
+            if (!gameActive)
+            {
+                yield return null;
+                continue;
+            }
+            
+            // Fade out
+            for (float t = 0; t < fadeDuration; t += Time.deltaTime)
+            {
+                _audioSource.volume = Mathf.Lerp(originalVolume, 0f, t / fadeDuration);
+                yield return null;
+            }
+            _audioSource.volume = 0f;
+ 
+            // Restart audio
+            _audioSource.Stop();
+            _audioSource.time = 0f;
+            _audioSource.Play();
+ 
+            // Fade in
+            for (float t = 0; t < fadeDuration; t += Time.deltaTime)
+            {
+                _audioSource.volume = Mathf.Lerp(0f, originalVolume, t / fadeDuration);
+                yield return null;
+            }
+            _audioSource.volume = originalVolume;
+ 
+            // Wait for clip duration minus fade time
+            yield return new WaitForSeconds(_audioSource.clip.length - 2 * fadeDuration);
+        }
+    }
+ 
+    private void StartLoopFade()
+    {
+        _audioSource.pitch = _audioPitch;
+        _audioSource.loop = false;
+
+        if (_audioLoopCoroutine != null)
+        {
+            StopCoroutine(_audioLoopCoroutine);
+        }
+
+        _audioLoopCoroutine = StartCoroutine(FadeAudioLoop());
+    }
+    
+    public void PlayLoopingGameAudio()
+    {
+        StartLoopFade();
+    }
+    
+    public int GetScore()
+    {
+        return score;
     }
 
     public void IncreaseScore()
@@ -51,7 +176,7 @@ public class GameManager : MonoBehaviour
         UpdateScoreText();
     }
 
-    public void UpdateHighScore()
+    private void UpdateHighScore()
     {
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         if (score > highScore)
@@ -65,6 +190,11 @@ public class GameManager : MonoBehaviour
 
     public void GoHome()
     {
+        // Audio
+        CheckStopFadeCoroutine();
+        if (!audioMuted) _audioSource.Stop();
+        
+        // Actions
         UpdateHighScore();
         FishManager.Instance.ReturnAllFish();
         movementController.Reset();
@@ -72,8 +202,15 @@ public class GameManager : MonoBehaviour
     
     public void GameOver()
     {
+        // Score
         UpdateHighScore();
+
+        // Audio
+        CheckStopFadeCoroutine();
+        if (!audioMuted) StartCoroutine(PlayDeathSoundCoroutine());
+
         
+        // Actions
         FishManager.Instance.DeactivateFish();
         
         gameOverCanvas.SetActive(true);
@@ -87,6 +224,11 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
+        // Audio
+        CheckStopFadeCoroutine();
+        if (!audioMuted) PlayGameAudio();
+        
+        // Actions
         FishManager.Instance.ReturnAllFish();
         FishManager.Instance.ActivateFish();
         ResetScore();
@@ -99,6 +241,10 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
+        // Audio
+        if (!audioMuted) _audioSource.Pause();
+        
+        // Actions
         FishManager.Instance.DeactivateFish();
         movementController.Deactivate();
 
@@ -107,6 +253,10 @@ public class GameManager : MonoBehaviour
 
     public void Resume()
     {
+        // Audio
+        if (!audioMuted) _audioSource.UnPause();
+        
+        // Actions
         FishManager.Instance.ActivateFish();
         movementController.Activate();
 

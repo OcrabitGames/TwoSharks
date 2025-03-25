@@ -1,4 +1,3 @@
-using UnityEditor.Tilemaps;
 using UnityEngine;
 
 // Note this script was inspired by ChatGPT, I learned about headers and some more about Instance management in Unity
@@ -20,24 +19,52 @@ public class FishManager : MonoBehaviour
     
     [Header("Pool Settings")]
     public int poolSize = 10;
-    public float minSpawnTime = 1f;
-    public float maxSpawnTime = 3f;
-    public float lionfishCooldownDuration = 2f;
-    public float speed = 3f;
-    
+    [SerializeField] private float minSpeed = 5f;
+    [SerializeField] private float maxSpeed = 7f;
+    [SerializeField] private float highLionfishCooldown = 1.5f;
+    [SerializeField] private float lowLionfishCooldown = .6f;
+    private float _lionfishCooldown;
+    [SerializeField] private float highMinnowCooldown = 1f;
+    [SerializeField] private float lowMinnowCooldown = .15f;
+    private float _minnowCooldown;
+    [SerializeField] private float highMinSpawnTime = 1f;
+    [SerializeField] private float lowMinSpawnTime = .5f;
+    private float _minSpawnTime;
+    [SerializeField] private float highMaxSpawnTime = 3f;
+    [SerializeField] private float lowMaxSpawnTime = .9f;
+    private float _maxSpawnTime;
+    [SerializeField] private int scoreTopline = 500;
+
+    private const float BaseSpeed = 5f;
+    private float _currentSpeed;
+
     private float[] _blueTimers;
     private float[] _pinkTimers;
     
-    private float _blueLionfishCooldown = 0f;
-    private float _pinkLionfishCooldown = 0f;
+    private float _blueLionfishCooldown;
+    private float _pinkLionfishCooldown;
+    private float _blueMinnowCooldown;
+    private float _pinkMinnowCooldown;
     
-    public bool fishActive = false;
+    public bool fishActive;
     
     private FishPool _blueMinnowPool;
     private FishPool _pinkMinnowPool;
     private FishPool _blueLionfishPool;
-    private FishPool _pinkLionfishPool; 
-    
+    private FishPool _pinkLionfishPool;
+
+    private void UpdateTimes()
+    {
+        var progressionRate = Mathf.Clamp01((float)GameManager.Instance.GetScore() / scoreTopline);
+        
+        _currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, progressionRate);
+        var adjustmentFactor = BaseSpeed / _currentSpeed;
+        
+        _lionfishCooldown = Mathf.Lerp(highLionfishCooldown, lowLionfishCooldown, progressionRate) * adjustmentFactor;
+        _minnowCooldown = Mathf.Lerp(highMinnowCooldown, lowMinnowCooldown, progressionRate) * adjustmentFactor;
+        _maxSpawnTime = Mathf.Lerp(highMaxSpawnTime, lowMaxSpawnTime, progressionRate) * adjustmentFactor;
+        _minSpawnTime = Mathf.Lerp(highMinSpawnTime, lowMinSpawnTime, progressionRate) * adjustmentFactor;
+    }
     
     void Awake()
     {
@@ -65,40 +92,68 @@ public class FishManager : MonoBehaviour
             _pinkTimers[i] = RandomSpawnTime() + 0.5f*i;
         }
     }
+    
     // Update is called once per frame
     private void Update()
     {   
         if (!fishActive) return;
+
+        UpdateTimes();
         
         _blueLionfishCooldown -= Time.deltaTime;
         _pinkLionfishCooldown -= Time.deltaTime;
+        _blueMinnowCooldown -= Time.deltaTime;
+        _pinkMinnowCooldown -= Time.deltaTime;
         
-        UpdateSharedTimers(_blueTimers, blueMarkers, _blueMinnowPool, _blueLionfishPool, ref _blueLionfishCooldown);
-        UpdateSharedTimers(_pinkTimers, pinkMarkers, _pinkMinnowPool, _pinkLionfishPool, ref _pinkLionfishCooldown);
+        UpdateSharedTimers(_blueTimers, blueMarkers, _blueMinnowPool, _blueLionfishPool, ref _blueLionfishCooldown, ref _blueMinnowCooldown);
+        UpdateSharedTimers(_pinkTimers, pinkMarkers, _pinkMinnowPool, _pinkLionfishPool, ref _pinkLionfishCooldown, ref _pinkMinnowCooldown);
     }
     
     // ReSharper disable Unity.PerformanceAnalysis
-    private void UpdateSharedTimers(float[] timers, Transform[] markers, FishPool minnowPool, FishPool lionfishPool, ref float lionFishCooldown)
+    private void UpdateSharedTimers(float[] timers, Transform[] markers, FishPool minnowPool, FishPool lionfishPool, ref float lionfishCooldown, ref float minnowCooldown)
     {
         for (int i = 0; i < timers.Length; i++)
         {
             timers[i] -= Time.deltaTime;
             if (timers[i] <= 0f)
             {
-                bool canSpawnLionfish = lionFishCooldown <= 0f;
-                bool spawnMinnow = Random.value <= 0.5f;
-                
-                bool shouldSpawnMinnow = !canSpawnLionfish || spawnMinnow;
-                
-                FishPool pool = shouldSpawnMinnow ? minnowPool : lionfishPool;
+                bool canSpawnLionfish = lionfishCooldown <= 0f;
+                bool canSpawnMinnow = minnowCooldown <= 0f;
+                bool spawnMinnow;
+
+                if (canSpawnLionfish && canSpawnMinnow)
+                {
+                    spawnMinnow = Random.value <= 0.5f;
+                }
+                else if (canSpawnLionfish)
+                {
+                    spawnMinnow = false;
+                }
+                else if (canSpawnMinnow)
+                {
+                    spawnMinnow = true;
+                }
+                else
+                {
+                    // Neither type is ready, so reset timer and skip spawning
+                    timers[i] = RandomSpawnTime();
+                    continue;
+                }
+
+                FishPool pool = spawnMinnow ? minnowPool : lionfishPool;
                 var fish = pool.GetFish();
                 Vector3 spawnPos = markers[i].position;
-                fish.Activate(spawnPos, speed);
+                fish.Activate(spawnPos, _currentSpeed);
 
-                if (!shouldSpawnMinnow)
+                if (spawnMinnow)
                 {
-                    lionFishCooldown = lionfishCooldownDuration;
+                    minnowCooldown = _minnowCooldown;
                 }
+                else
+                {
+                    lionfishCooldown = _lionfishCooldown;
+                }
+
                 timers[i] = RandomSpawnTime();
             }
         }
@@ -106,7 +161,7 @@ public class FishManager : MonoBehaviour
     
     private float RandomSpawnTime()
     {
-        return Random.Range(minSpawnTime, maxSpawnTime);
+        return Random.Range(_minSpawnTime, _maxSpawnTime);
     }
 
     public void ReturnFish(PooledFish fish)

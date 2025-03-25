@@ -6,9 +6,17 @@ public static class VirtualInput
     {
         if (Input.GetKeyDown(KeyCode.A)) return true;
 
-        if (Input.GetMouseButtonDown(0))
-            return Input.mousePosition.x < Screen.width / 2;
+        // Touch
+        foreach (Touch touch in Input.touches)
+        {
+            if (touch.phase == TouchPhase.Began && touch.position.x < Screen.width / 2)
+                return true;
+        }
 
+        // Mouse
+        if (Input.GetMouseButtonDown(0) && Input.mousePosition.x < Screen.width / 2)
+            return true;
+        
         return false;
     }
 
@@ -16,9 +24,17 @@ public static class VirtualInput
     {
         if (Input.GetKeyDown(KeyCode.D)) return true;
 
-        if (Input.GetMouseButtonDown(0))
-            return Input.mousePosition.x >= Screen.width / 2;
+        // Touch
+        foreach (Touch touch in Input.touches)
+        {
+            if (touch.phase == TouchPhase.Began && touch.position.x >= Screen.width / 2)
+                return true;
+        }
 
+        // Mouse
+        if (Input.GetMouseButtonDown(0) && Input.mousePosition.x >= Screen.width / 2)
+            return true;
+        
         return false;
     }
 }

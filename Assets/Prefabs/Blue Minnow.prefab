@@ -224,7 +224,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b13f8df253f00b4d811637048fc7b69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
-  screenCutOff: 6
+  initialScreenCutOff: 5
   isBlue: 1
   isMinnow: 1

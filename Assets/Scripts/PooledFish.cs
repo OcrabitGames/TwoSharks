@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PooledFish : MonoBehaviour
 {
-    private float _speed = 0f;
-    public float screenCutOff = 5f;
-    private bool _isActive = false;
+    private float _speed;
+    [FormerlySerializedAs("screenCutOff")] public float initialScreenCutOff;
+    private bool _isActive;
     public bool isBlue;
     public bool isMinnow;
     
@@ -39,9 +40,16 @@ public class PooledFish : MonoBehaviour
         
         transform.Translate(Vector3.down * (_speed * Time.deltaTime));
 
-        if (transform.position.y < -screenCutOff)
+        if (transform.position.y < -initialScreenCutOff)
         {
-            FishManager.Instance.ReturnFish(this);
+            if (isMinnow)
+            {
+                GameManager.Instance.GameOver();
+            }
+            else
+            {
+                FishManager.Instance.ReturnFish(this);
+            }
         }
     }
 
