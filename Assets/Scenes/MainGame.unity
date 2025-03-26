@@ -3269,7 +3269,7 @@ MonoBehaviour:
   blueMinnowPrefab: {fileID: 7846671266197951323, guid: da0d1058ffb054e6cb969889d23823e3, type: 3}
   pinkMinnowPrefab: {fileID: 3358004858354830619, guid: 306e6096006be40bd978fb06dcb53cf8, type: 3}
   poolSize: 5
-  minSpeed: 4
+  minSpeed: 5
   maxSpeed: 7
   highLionfishCooldown: 1.5
   lowLionfishCooldown: 0.6
@@ -3280,6 +3280,7 @@ MonoBehaviour:
   highMaxSpawnTime: 2.5
   lowMaxSpawnTime: 0.9
   scoreTopline: 250
+  speedTopline: 150
   fishActive: 0
 --- !u!1 &1425617523
 GameObject:

@@ -33,7 +33,8 @@ public class FishManager : MonoBehaviour
     [SerializeField] private float highMaxSpawnTime = 3f;
     [SerializeField] private float lowMaxSpawnTime = .9f;
     private float _maxSpawnTime;
-    [SerializeField] private int scoreTopline = 500;
+    [SerializeField] private int scoreTopline = 250;
+    [SerializeField] private int speedTopline = 150;
 
     private const float BaseSpeed = 5f;
     private float _currentSpeed;
@@ -56,8 +57,11 @@ public class FishManager : MonoBehaviour
     private void UpdateTimes()
     {
         var progressionRate = Mathf.Clamp01((float)GameManager.Instance.GetScore() / scoreTopline);
+        var progressionSpeedRate = Mathf.Clamp01((float)GameManager.Instance.GetScore() / speedTopline);
+        // Increase Audio Pitch
+        GameManager.Instance.IncrementPitch(progressionRate);
         
-        _currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, progressionRate);
+        _currentSpeed = Mathf.Lerp(minSpeed, maxSpeed, progressionSpeedRate);
         var adjustmentFactor = BaseSpeed / _currentSpeed;
         
         _lionfishCooldown = Mathf.Lerp(highLionfishCooldown, lowLionfishCooldown, progressionRate) * adjustmentFactor;

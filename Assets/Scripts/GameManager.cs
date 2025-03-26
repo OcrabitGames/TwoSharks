@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     // Audio Source
     private AudioSource _audioSource;
     private float _audioPitch;
+    [SerializeField] private float audioPitchAdjust;
     public AudioClip deathClip;
     private Coroutine _audioLoopCoroutine;
     private Coroutine _deathSoundCoroutine;
@@ -46,11 +48,17 @@ public class GameManager : MonoBehaviour
         
         _audioSource = GetComponent<AudioSource>();
         _audioPitch = _audioSource.pitch;
+        audioPitchAdjust = _audioPitch;
         
         audioMuted = PlayerPrefs.GetInt("AudioMuted", 0) == 1;
         UpdateAudioIcon();
     }
 
+    public void IncrementPitch(float progressionRate)
+    {
+        audioPitchAdjust = _audioPitch + _audioPitch * progressionRate;
+        _audioSource.pitch = audioPitchAdjust;
+    }
     private void UpdateAudioIcon()
     {
         audioIcon.GetComponent<SpriteRenderer>().sprite = audioMuted ? audioIcons[1] : audioIcons[0];
