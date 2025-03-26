@@ -38,6 +38,9 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         
+        // Authentic GameCenter On Load
+        GameCenterManager.Authenticate();
+        
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         highScoreValueText.text = highScore.ToString();
         
@@ -176,13 +179,18 @@ public class GameManager : MonoBehaviour
         UpdateScoreText();
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     private void UpdateHighScore()
     {
+        // Update Leaderboard
+        GameCenterManager.SubmitScore(score);
+        
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         if (score > highScore)
         {
             PlayerPrefs.SetInt("HighScore", score);
             PlayerPrefs.Save();
+            
             highScore = score;
             highScoreValueText.text = highScore.ToString();
         }
