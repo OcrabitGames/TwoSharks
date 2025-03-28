@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
@@ -56,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void IncrementPitch(float progressionRate)
     {
-        audioPitchAdjust = _audioPitch + _audioPitch * progressionRate;
+        audioPitchAdjust = _audioPitch + _audioPitch * progressionRate * 0.2f;
         _audioSource.pitch = audioPitchAdjust;
     }
     private void UpdateAudioIcon()
@@ -105,64 +104,6 @@ public class GameManager : MonoBehaviour
         
         StopCoroutine(_audioLoopCoroutine);
         _audioLoopCoroutine = null;
-    }
-    
-    private IEnumerator FadeAudioLoop()
-    {
-        
-        float fadeDuration = 2f;
-        float originalVolume = _audioSource.volume;
- 
-        while (true)
-        {
-            if (!gameActive)
-            {
-                yield return null;
-                continue;
-            }
-            
-            // Fade out
-            for (float t = 0; t < fadeDuration; t += Time.deltaTime)
-            {
-                _audioSource.volume = Mathf.Lerp(originalVolume, 0f, t / fadeDuration);
-                yield return null;
-            }
-            _audioSource.volume = 0f;
- 
-            // Restart audio
-            _audioSource.Stop();
-            _audioSource.time = 0f;
-            _audioSource.Play();
- 
-            // Fade in
-            for (float t = 0; t < fadeDuration; t += Time.deltaTime)
-            {
-                _audioSource.volume = Mathf.Lerp(0f, originalVolume, t / fadeDuration);
-                yield return null;
-            }
-            _audioSource.volume = originalVolume;
- 
-            // Wait for clip duration minus fade time
-            yield return new WaitForSeconds(_audioSource.clip.length - 2 * fadeDuration);
-        }
-    }
- 
-    private void StartLoopFade()
-    {
-        _audioSource.pitch = _audioPitch;
-        _audioSource.loop = false;
-
-        if (_audioLoopCoroutine != null)
-        {
-            StopCoroutine(_audioLoopCoroutine);
-        }
-
-        _audioLoopCoroutine = StartCoroutine(FadeAudioLoop());
-    }
-    
-    public void PlayLoopingGameAudio()
-    {
-        StartLoopFade();
     }
     
     public int GetScore()
